@@ -1,18 +1,19 @@
 export interface Caractere {
-    id: number
+    id: number;
     character: string;
     romanji: string;
 }
 
-interface caracterePrivate {
-    lettre: Caractere
+interface CaracterePrivate {
+    lettre: Caractere,
+    character?: string
 }
 
-function CharacterCard({lettre}: caracterePrivate) {
+function CharacterCard({lettre}: CaracterePrivate) {
     return (
         <div className="character-card">
-            <p>Caractère japonais: {lettre.character}</p>
-            <p>Prononciation (rōmaji): {lettre.romanji}</p>
+            <span className="kana">{lettre.character}</span>
+            <span className="romanji">{lettre.romanji}</span>
         </div>
     );
 }
