@@ -1,27 +1,34 @@
-/* ===========================
-   KANA APP — Encre & Washi
-   Thème : Papier japonais traditionnel
-   =========================== */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@500;700&display=swap');
 
-@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=Crimson+Pro:ital,wght@0,300;0,600;1,300&display=swap');
-
-/* ── Variables ── */
 :root {
-    --washi:       #f5f0e8;
-    --washi-dark:  #ede6d6;
-    --ink:         #1a1410;
-    --ink-light:   #3d3026;
-    --vermillion:  #c0392b;
-    --gold:        #b8860b;
-    --gold-light:  #e8c84a;
-    --shadow-ink:  rgba(26, 20, 16, 0.12);
-    --shadow-deep: rgba(26, 20, 16, 0.25);
+    --ink: #2b2b2b;
+    --ink-light: #4a4a4a;
+    --text-subtle: #6b6b6b;
 
-    --radius-card: 4px;
-    --transition:  0.25s ease;
+    --sand: #e8dcc8;
+    --sand-light: #f2ead9;
+    --sand-dark: #d4c4a8;
+
+    --wood: #8b6f47;
+    --wood-light: #a68a5e;
+    --wood-dark: #6b5336;
+
+    --rust: #c1502e;
+    --rust-light: #d96b47;
+
+    --slate: #5a6c7d;
+    --slate-light: #7a8c9d;
+
+    --cream: #faf7f2;
+    --ivory: #f5f1e8;
+
+    --shadow-light: rgba(43, 43, 43, 0.08);
+    --shadow-medium: rgba(43, 43, 43, 0.15);
+
+    --radius: 10px;
+    --transition: 0.25s ease;
 }
 
-/* ── Reset & Base ── */
 *, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
@@ -29,193 +36,602 @@
 }
 
 body {
-    font-family: 'Crimson Pro', 'Noto Serif JP', Georgia, serif;
-    background-color: var(--washi);
+    font-family: 'Noto Sans JP', sans-serif;
+    background: linear-gradient(135deg, #f5f1e8 0%, #e8dcc8 100%);
     color: var(--ink);
     min-height: 100vh;
-
-    /* texture papier washi subtile */
-    background-image:
-            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-}
-
-/* ── En-tête ── */
-.app-header {
-    text-align: center;
-    padding: 3.5rem 1rem 2.5rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
     position: relative;
 }
 
-.app-header::after {
+body::before {
     content: '';
-    display: block;
-    width: 80px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
+            repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 80px,
+                    rgba(139, 111, 71, 0.02) 80px,
+                    rgba(139, 111, 71, 0.02) 81px
+            ),
+            repeating-linear-gradient(
+                    90deg,
+                    transparent,
+                    transparent 80px,
+                    rgba(139, 111, 71, 0.02) 80px,
+                    rgba(139, 111, 71, 0.02) 81px
+            );
+    pointer-events: none;
+    z-index: 0;
+}
+
+.App {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 3rem 2rem 5rem;
+    position: relative;
+    z-index: 1;
+}
+
+.App > h1 {
+    font-family: 'Noto Serif JP', serif;
+    font-size: clamp(2rem, 5vw, 2.8rem);
+    font-weight: 700;
+    color: var(--ink);
+    text-align: center;
+    margin-bottom: 3.5rem;
+    position: relative;
+    letter-spacing: 0.05em;
+}
+
+.App > h1::before {
+    content: '';
+    position: absolute;
+    top: -1.2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
     height: 3px;
-    background: var(--vermillion);
-    margin: 1.2rem auto 0;
+    background: linear-gradient(90deg, var(--rust), var(--wood));
     border-radius: 2px;
 }
 
-.app-header h1 {
-    font-family: 'Noto Serif JP', serif;
-    font-size: clamp(1.6rem, 4vw, 2.6rem);
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    color: var(--ink);
+.App > h1::after {
+    content: '';
+    position: absolute;
+    bottom: -1.2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 2px;
+    background: linear-gradient(90deg,
+    transparent,
+    var(--wood),
+    transparent
+    );
 }
 
-.app-header h1 span {
-    color: var(--vermillion);
-}
-
-/* ── Conteneur principal ── */
-.app-container {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 0 1.5rem 4rem;
-}
-
-/* ── Section (Hiragana / Katakana) ── */
 .character-grid {
-    margin-bottom: 3.5rem;
+    background: var(--cream);
+    border-radius: 18px;
+    padding: 2.5rem 2rem;
+    margin-bottom: 2.5rem;
+    box-shadow:
+            0 4px 20px var(--shadow-light),
+            0 0 0 1px rgba(139, 111, 71, 0.1);
+    position: relative;
+    overflow: hidden;
+    max-width: 100%;
+    width: 100%;
+}
+
+.character-grid::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--rust), var(--wood), var(--rust));
+    opacity: 0.6;
+}
+
+.character-grid::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 35px 35px 0;
+    border-color: transparent var(--sand-dark) transparent transparent;
+    opacity: 0.3;
 }
 
 .character-grid h2 {
-    font-family: 'Noto Serif JP', serif;
-    font-size: 1.35rem;
-    font-weight: 400;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--ink-light);
-    padding: 0.5rem 0 0.5rem 1rem;
-    border-left: 4px solid var(--gold);
-    margin-bottom: 1.4rem;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 2rem;
     display: flex;
     align-items: center;
-    gap: 0.7rem;
+    gap: 1rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+.character-grid h2::before {
+    content: '';
+    width: 5px;
+    height: 35px;
+    background: linear-gradient(180deg, var(--rust), var(--wood));
+    border-radius: 2px;
 }
 
 .character-grid h2::after {
-    content: attr(data-jp);
-    font-size: 1.1rem;
-    color: var(--gold);
-    font-weight: 300;
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg,
+    var(--wood) 0%,
+    transparent 100%
+    );
+    opacity: 0.3;
 }
 
-/* ── Grille ── */
 .grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 10px;
-    justify-items: center;
+    grid-template-columns: repeat(auto-fill, minmax(95px, 1fr));
+    gap: 16px;
+    width: 100%;
 }
 
-/* ── Carte caractère ── */
+@media (min-width: 640px) {
+    .grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 18px;
+    }
+}
+
 .character-card {
-    width: 100%;
+    background: linear-gradient(135deg, #ffffff 0%, var(--ivory) 100%);
+    border: 2px solid var(--sand-dark);
+    border-radius: var(--radius);
     aspect-ratio: 1;
-    min-width: 56px;
-    max-width: 110px;
 
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 0.3rem;
+    gap: 0.5rem;
+    padding: 1rem 0.5rem;
 
-    background: #fff9f0;
-    border: 1px solid var(--washi-dark);
-    border-radius: var(--radius-card);
-    box-shadow:
-            2px 3px 0 0 var(--shadow-ink),
-            0 1px 6px 0 var(--shadow-ink);
-
-    cursor: default;
+    cursor: pointer;
     transition:
             transform var(--transition),
+            border-color var(--transition),
             box-shadow var(--transition),
             background var(--transition);
 
     position: relative;
     overflow: hidden;
+    box-shadow:
+            0 2px 8px var(--shadow-light),
+            inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
-/* trait décoratif coin supérieur droit */
 .character-card::before {
     content: '';
     position: absolute;
-    top: 0; right: 0;
-    width: 14px; height: 14px;
-    background: linear-gradient(135deg, transparent 50%, var(--gold-light) 50%);
-    opacity: 0.6;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(
+            circle at top right,
+            rgba(139, 111, 71, 0.1) 0%,
+            transparent 60%
+    );
+    opacity: 0;
+    transition: opacity var(--transition);
+}
+
+.character-card::after {
+    content: '';
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 4px;
+    height: 4px;
+    background: var(--rust);
+    border-radius: 50%;
+    opacity: 0.5;
+    transition: opacity var(--transition), transform var(--transition);
+}
+
+.character-card:hover::before {
+    opacity: 1;
+}
+
+.character-card:hover::after {
+    opacity: 1;
+    transform: scale(1.5);
 }
 
 .character-card:hover {
-    transform: translateY(-3px) scale(1.04);
+    transform: translateY(-5px) scale(1.02);
+    border-color: var(--wood);
+    background: linear-gradient(135deg, #ffffff 0%, var(--sand-light) 100%);
     box-shadow:
-            3px 6px 0 0 var(--shadow-deep),
-            0 4px 16px 0 var(--shadow-ink);
-    background: #fffdf7;
+            0 8px 24px var(--shadow-medium),
+            0 0 0 1px var(--wood),
+            inset 0 1px 0 rgba(255, 255, 255, 1);
 }
 
-/* Caractère japonais */
+.character-card:active {
+    transform: translateY(-3px) scale(1.01);
+}
+
 .character-card .kana {
     font-family: 'Noto Serif JP', serif;
-    font-size: clamp(1.5rem, 3.5vw, 2.2rem);
-    font-weight: 400;
+    font-size: clamp(2rem, 4.5vw, 2.8rem);
+    font-weight: 700;
     color: var(--ink);
     line-height: 1;
-    letter-spacing: 0;
-    transition: color var(--transition);
+    transition:
+            color var(--transition),
+            transform var(--transition);
+    letter-spacing: -0.02em;
 }
 
 .character-card:hover .kana {
-    color: var(--vermillion);
+    color: var(--wood-dark);
+    transform: scale(1.08);
 }
 
-/* Rōmaji */
 .character-card .romanji {
-    font-family: 'Crimson Pro', serif;
-    font-size: clamp(0.6rem, 1.4vw, 0.8rem);
-    font-weight: 300;
-    font-style: italic;
-    color: var(--gold);
-    letter-spacing: 0.05em;
-    line-height: 1;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--text-subtle);
+    text-transform: lowercase;
+    letter-spacing: 0.08em;
+    transition: color var(--transition), background var(--transition);
+    padding: 0.2rem 0.5rem;
+    background: rgba(139, 111, 71, 0.08);
+    border-radius: 4px;
 }
 
-/* ── Séparateur entre sections ── */
-.section-divider {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin: 0.5rem 0 2.5rem;
-    color: var(--shadow-ink);
-    font-size: 1.1rem;
+.character-card:hover .romanji {
+    color: var(--wood-dark);
+    background: rgba(139, 111, 71, 0.15);
 }
 
-.section-divider::before,
-.section-divider::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: linear-gradient(to right, transparent, var(--gold-light), transparent);
+.character-grid:nth-of-type(1) .character-card:hover {
+    border-color: var(--rust);
 }
 
-/* ── Responsive ── */
+.character-grid:nth-of-type(1) .character-card:hover .kana {
+    color: var(--rust);
+}
+
+.character-grid:nth-of-type(1) .character-card:hover .romanji {
+    color: var(--rust);
+    background: rgba(193, 80, 46, 0.12);
+}
+
+.character-grid:nth-of-type(2) .character-card:hover {
+    border-color: var(--slate);
+}
+
+.character-grid:nth-of-type(2) .character-card:hover .kana {
+    color: var(--slate);
+}
+
+.character-grid:nth-of-type(2) .character-card:hover .romanji {
+    color: var(--slate);
+    background: rgba(90, 108, 125, 0.12);
+}
+
 @media (max-width: 640px) {
+    .App {
+        padding: 2rem 1rem 3rem;
+    }
+
+    .character-grid {
+        padding: 2rem 1.25rem;
+        border-radius: 16px;
+    }
+
     .grid {
-        grid-template-columns: repeat(5, 1fr);
-        gap: 6px;
+        gap: 14px;
     }
 
     .character-card {
-        min-width: 44px;
+        padding: 0.75rem 0.5rem;
     }
 }
 
-@media (max-width: 380px) {
-    .grid {
-        gap: 4px;
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.character-card {
+    animation: fadeInUp 0.5s ease backwards;
+}
+
+.character-card:nth-child(1) { animation-delay: 0.03s; }
+.character-card:nth-child(2) { animation-delay: 0.06s; }
+.character-card:nth-child(3) { animation-delay: 0.09s; }
+.character-card:nth-child(4) { animation-delay: 0.12s; }
+.character-card:nth-child(5) { animation-delay: 0.15s; }
+.character-card:nth-child(6) { animation-delay: 0.18s; }
+.character-card:nth-child(7) { animation-delay: 0.21s; }
+.character-card:nth-child(8) { animation-delay: 0.24s; }
+.character-card:nth-child(9) { animation-delay: 0.27s; }
+.character-card:nth-child(10) { animation-delay: 0.30s; }
+.character-card:nth-child(n+11) { animation-delay: 0.33s; }
+
+.mode-navigation {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.mode-navigation button {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 0.75rem 2rem;
+    border: 2px solid var(--sand-dark);
+    border-radius: var(--radius);
+    background: var(--cream);
+    color: var(--ink);
+    cursor: pointer;
+    transition: all var(--transition);
+    box-shadow: 0 2px 8px var(--shadow-light);
+}
+
+.mode-navigation button:hover {
+    transform: translateY(-2px);
+    border-color: var(--wood);
+    box-shadow: 0 4px 12px var(--shadow-medium);
+}
+
+.mode-navigation button.active {
+    background: linear-gradient(135deg, var(--wood), var(--wood-light));
+    color: var(--cream);
+    border-color: var(--wood);
+    box-shadow: 0 4px 16px var(--shadow-medium);
+}
+
+.script-selector {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.script-selector label {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    padding: 0.6rem 1.5rem;
+    border: 2px solid var(--sand-dark);
+    border-radius: var(--radius);
+    background: var(--cream);
+    color: var(--ink);
+    cursor: pointer;
+    transition: all var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.script-selector label:hover {
+    border-color: var(--wood);
+    background: var(--sand-light);
+}
+
+.script-selector label.active {
+    background: var(--wood);
+    color: var(--cream);
+    border-color: var(--wood-dark);
+}
+
+.script-selector input[type="radio"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: var(--wood-dark);
+}
+
+.quiz-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.quiz-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.score {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--ink);
+    background: var(--cream);
+    padding: 1rem 2rem;
+    border-radius: var(--radius);
+    box-shadow: 0 2px 8px var(--shadow-light);
+    display: inline-block;
+}
+
+.score .percentage {
+    color: var(--wood);
+    font-size: 0.9rem;
+}
+
+.quiz-card {
+    background: var(--cream);
+    border-radius: 18px;
+    padding: 3rem 2rem;
+    box-shadow:
+            0 4px 20px var(--shadow-light),
+            0 0 0 1px rgba(139, 111, 71, 0.1);
+}
+
+.quiz-character {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.big-kana {
+    font-family: 'Noto Serif JP', serif;
+    font-size: clamp(4rem, 12vw, 8rem);
+    font-weight: 700;
+    color: var(--ink);
+    display: inline-block;
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg, #ffffff 0%, var(--ivory) 100%);
+    border-radius: var(--radius);
+    border: 3px solid var(--sand-dark);
+    box-shadow: 0 4px 16px var(--shadow-medium);
+}
+
+.quiz-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.quiz-input {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 1.25rem;
+    padding: 1rem 1.5rem;
+    border: 2px solid var(--sand-dark);
+    border-radius: var(--radius);
+    background: #ffffff;
+    color: var(--ink);
+    text-align: center;
+    transition: all var(--transition);
+}
+
+.quiz-input:focus {
+    outline: none;
+    border-color: var(--wood);
+    box-shadow: 0 0 0 3px rgba(139, 111, 71, 0.1);
+}
+
+.quiz-input:disabled {
+    background: var(--sand-light);
+    cursor: not-allowed;
+}
+
+.quiz-button {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: var(--radius);
+    background: linear-gradient(135deg, var(--rust), var(--rust-light));
+    color: white;
+    cursor: pointer;
+    transition: all var(--transition);
+    box-shadow: 0 4px 12px var(--shadow-medium);
+}
+
+.quiz-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--shadow-medium);
+}
+
+.quiz-button:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.quiz-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.feedback {
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding: 1rem 1.5rem;
+    border-radius: var(--radius);
+    text-align: center;
+    animation: feedbackSlide 0.3s ease;
+}
+
+.feedback.correct {
+    background: linear-gradient(135deg, #d4edda, #c3e6cb);
+    color: #155724;
+    border: 2px solid #b1dfbb;
+}
+
+.feedback.incorrect {
+    background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+    color: #721c24;
+    border: 2px solid #f1b0b7;
+}
+
+@keyframes feedbackSlide {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 640px) {
+    .mode-navigation {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .mode-navigation button {
+        width: 100%;
+    }
+
+    .script-selector {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .script-selector label {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .quiz-card {
+        padding: 2rem 1.5rem;
+    }
+
+    .big-kana {
+        font-size: clamp(3rem, 20vw, 6rem);
     }
 }

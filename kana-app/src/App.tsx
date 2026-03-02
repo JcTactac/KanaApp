@@ -1,26 +1,67 @@
-import './App.css';
-import CharacterGrid from "./components/CharacterGrid";
-import { kanaData } from "./data/kana";
+import './style.css';
+import { useState } from 'react';
+import { kanaData } from './data/kana';
+import StudyMode from './components/StudyMode';
+import QuizMode from './components/QuizMode';
 
 function App() {
-    const kanaWithId = kanaData.map((k, index) => ({
-        id: index,
-        character: k.hiragana, // Pour Hiragana
-        romanji: k.romanji,
-    }));
+    const [mode, setMode] = useState<'study' | 'quiz'>('study');
+    // état permettant de filtrer/afficher les bonnes données
+    const [script, setScript] = useState<'hiragana' | 'katakana'>('hiragana');
 
-    const kanaKatakanaWithId = kanaData.map((k, index) => ({
-        id: index,
-        character: k.katakana, // Pour Katakana
-        romanji: k.romanji,
-    }));
+    const switchMode = (newMode: 'study' | 'quiz') => {
+        setMode(newMode);
+    };
 
     return (
         <div className="App">
-            <h1>Apprentissage du Japonais - Kana</h1>
+            <h1>KanaApp - Jean Christophe Lay</h1>
 
-            <CharacterGrid characters={kanaWithId} title="Hiragana" />
-            <CharacterGrid characters={kanaKatakanaWithId} title="Katakana" />
+            <nav className="mode-navigation">
+                <button
+                    className={mode === 'study' ? 'active' : ''}
+                    onClick={() => switchMode('study')}
+                >
+                    Mode Étude
+                </button>
+                <button
+                    className={mode === 'quiz' ? 'active' : ''}
+                    onClick={() => switchMode('quiz')}
+                >
+                    Mode Quiz
+                </button>
+            </nav>
+
+            {mode === 'study' && (
+                <div className="script-selector">
+                    <label className={script === 'hiragana' ? 'active' : ''}>
+                        <input
+                            type="radio"
+                            name="script"
+                            checked={script === 'hiragana'}
+                            onChange={() => setScript('hiragana')}
+                        />
+                        Hiragana
+                    </label>
+                    <label className={script === 'katakana' ? 'active' : ''}>
+                        <input
+                            type="radio"
+                            name="script"
+                            checked={script === 'katakana'}
+                            onChange={() => setScript('katakana')}
+                        />
+                        Katakana
+                    </label>
+                </div>
+            )}
+
+            {mode === 'study' && (
+                <StudyMode script={script} kanaData={kanaData} />
+            )}
+
+            {mode === 'quiz' && (
+                <QuizMode script={script} kanaData={kanaData} />
+            )}
         </div>
     );
 }
