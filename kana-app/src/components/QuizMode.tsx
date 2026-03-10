@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import type {Kana} from '../data/kana';
+import { useRef, useEffect } from 'react';
+import type { Kana } from '../data/kana';
+import {useQuiz} from "./useQuiz.tsx";
 
 interface QuizModeProps {
     script: 'hiragana' | 'katakana';
@@ -7,50 +8,24 @@ interface QuizModeProps {
 }
 
 function QuizMode({ script, kanaData }: QuizModeProps) {
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const [userAnswer, setUserAnswer] = useState('');
-    const [score, setScore] = useState({ correct: 0, total: 0 });
-    const [feedback, setFeedback] = useState('');
-    const [showFeedback, setShowFeedback] = useState(false);
+    const {
+        displayChar,
+        userAnswer,
+        setUserAnswer,
+        score,
+        bestScore,
+        feedback,
+        showFeedback,
+        handleSubmit,
+    } = useQuiz(kanaData, script);
 
-    // Permet de déterminer quel caractère on doit afficher
-    const currentKana = kanaData[currentIndex];
-    const displayChar = script === 'hiragana'
-        ? currentKana.hiragana
-        : currentKana.katakana;
+    const inputRef = useRef<HTMLInputElement>(null);
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-
-
-        if (userAnswer.trim() === '') return;
-
-        /*
-         Permet de valider ou non la réponse utilisateur (enlève les espaces avec trim et met la réponse
-         en miniscule avec lowercase)
-         */
-        const isCorrect = userAnswer.toLowerCase().trim() ===
-            currentKana.romanji.toLowerCase();
-
-        setScore({
-            correct: score.correct + (isCorrect ? 1 : 0),
-            total: score.total + 1,
-        });
-
-        setFeedback(
-            isCorrect
-                ? '✅ Correct !'
-                : `❌ Incorrect. C'était "${currentKana.romanji}"`
-        );
-        setShowFeedback(true);
-        setUserAnswer('');
-
-        setTimeout(() => {
-            setCurrentIndex((currentIndex + 1) % kanaData.length);
-            setShowFeedback(false);
-            setFeedback('');
-        }, 1500);
-    };
+    useEffect(() => {
+        if (!showFeedback) {
+            inputRef.current?.focus();
+        }
+    }, [displayChar, showFeedback]);
 
     return (
         <div className="quiz-container">
@@ -59,8 +34,11 @@ function QuizMode({ script, kanaData }: QuizModeProps) {
                     Score : {score.correct} / {score.total}
                     {score.total > 0 && (
                         <span className="percentage">
-              {' '}({Math.round((score.correct / score.total) * 100)}%)
-            </span>
+                            {' '}({Math.round((score.correct / score.total) * 100)}%)
+                        </span>
+                    )}
+                    {bestScore > 0 && (
+                        <span className="best-score"> 🏆 Record : {bestScore}%</span>
                     )}
                 </div>
             </div>
@@ -72,11 +50,11 @@ function QuizMode({ script, kanaData }: QuizModeProps) {
 
                 <form onSubmit={handleSubmit} className="quiz-form">
                     <input
+                        ref={inputRef}
                         type="text"
                         value={userAnswer}
                         onChange={(e) => setUserAnswer(e.target.value)}
                         placeholder="Tapez le rōmaji..."
-                        autoFocus
                         disabled={showFeedback}
                         className="quiz-input"
                     />
