@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback } from 'react';
-import { useLocalStorage } from './useLocalStorage';
-import type { Kana } from '../data/kana';
+import { useLocalStorage } from './useLocalStorage.tsx';
+import type { Kana } from '../data/kana.ts';
 
 function shuffle<T>(array: T[]): T[] {
     const shuffled = [...array];
