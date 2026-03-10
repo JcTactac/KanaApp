@@ -8,7 +8,6 @@ interface StudyModeProps {
 const ROW_SIZES = [5,5,5,5,5,5,5,3,5,2,1,5,5,5,5,5];
 
 function StudyMode({ kanaData }: StudyModeProps) {
-    // Découpe kanaData en lignes selon ROW_SIZES
     const rows: Kana[][] = [];
     let cursor = 0;
     for (const size of ROW_SIZES) {

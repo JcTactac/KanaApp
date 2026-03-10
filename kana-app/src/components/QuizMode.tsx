@@ -81,7 +81,6 @@ function QuizMode({ script, kanaData }: QuizModeProps) {
                 />
             </aside>
 
-            {/* ── Carte quiz ── */}
             <div className="quiz-card">
                 <div className="quiz-character">
                     <span className="big-kana">{displayChar}</span>
