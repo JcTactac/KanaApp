@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState, useMemo } from 'react';
-import { useQuiz, type QuizMode as QuizModeType } from './useQuiz';
+import { useQuiz, type QuizMode as QuizModeType } from '../hooks/useQuiz.tsx';
 import KanaFilter from './KanaFilter';
 import type { Kana } from '../data/kana';
 
