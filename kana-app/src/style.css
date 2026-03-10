@@ -257,16 +257,30 @@ body::before {
 /* ════════════════════════════════════════════════
    CARTES
 ════════════════════════════════════════════════ */
-.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+.gojuon-grid {
+    display: flex;
+    flex-direction: column;
     gap: 10px;
 }
 
-@media (min-width: 640px) {
-    .grid {
-        grid-template-columns: repeat(auto-fill, minmax(108px, 1fr));
-        gap: 12px;
+.gojuon-row {
+    display: flex;
+    gap: 10px;
+}
+
+.gojuon-row .character-card {
+    width: calc((100% - 4 * 10px) / 5);
+    flex-shrink: 0;
+    animation: fadeInUp 0.4s ease backwards;
+}
+
+@media (max-width: 640px) {
+    .gojuon-row .character-card {
+        width: calc((100% - 4 * 8px) / 5);
+    }
+
+    .gojuon-row {
+        gap: 8px;
     }
 }
 
