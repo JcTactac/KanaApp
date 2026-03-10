@@ -1,5 +1,5 @@
 import CharacterCard from './CharacterCard';
-import type {Kana} from '../data/kana';
+import type { Kana } from '../data/kana';
 
 interface StudyModeProps {
     script: 'hiragana' | 'katakana';

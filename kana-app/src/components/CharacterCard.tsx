@@ -5,11 +5,10 @@ export interface Caractere {
 }
 
 interface CaracterePrivate {
-    lettre: Caractere,
-    character?: string
+    lettre: Caractere;
 }
 
-function CharacterCard({lettre}: CaracterePrivate) {
+function CharacterCard({ lettre }: CaracterePrivate) {
     return (
         <div className="character-card">
             <span className="kana">{lettre.character}</span>
