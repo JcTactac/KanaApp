@@ -1,17 +1,14 @@
 import './style.css';
 import { useState } from 'react';
+import { Routes, Route, useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { kanaData } from './data/kana';
 import StudyMode from './components/StudyMode';
 import QuizMode from './components/QuizMode';
 
 function App() {
-    const [mode, setMode] = useState<'study' | 'quiz'>('study');
-    // état permettant de filtrer/afficher les bonnes données
+    const location = useLocation();
+    const navigate = useNavigate();
     const [script, setScript] = useState<'hiragana' | 'katakana'>('hiragana');
-
-    const switchMode = (newMode: 'study' | 'quiz') => {
-        setMode(newMode);
-    };
 
     return (
         <div className="App">
@@ -19,20 +16,20 @@ function App() {
 
             <nav className="mode-navigation">
                 <button
-                    className={mode === 'study' ? 'active' : ''}
-                    onClick={() => switchMode('study')}
+                    className={location.pathname === '/study' ? 'active' : ''}
+                    onClick={() => navigate('/study')}
                 >
                     Mode Étude
                 </button>
                 <button
-                    className={mode === 'quiz' ? 'active' : ''}
-                    onClick={() => switchMode('quiz')}
+                    className={location.pathname === '/quiz' ? 'active' : ''}
+                    onClick={() => navigate('/quiz')}
                 >
                     Mode Quiz
                 </button>
             </nav>
 
-            {mode === 'study' && (
+            {location.pathname === '/study' && (
                 <div className="script-selector">
                     <label className={script === 'hiragana' ? 'active' : ''}>
                         <input
@@ -55,13 +52,17 @@ function App() {
                 </div>
             )}
 
-            {mode === 'study' && (
-                <StudyMode script={script} kanaData={kanaData} />
-            )}
-
-            {mode === 'quiz' && (
-                <QuizMode script={script} kanaData={kanaData} />
-            )}
+            <Routes>
+                <Route
+                    path="/study"
+                    element={<StudyMode script={script} kanaData={kanaData} />}
+                />
+                <Route
+                    path="/quiz"
+                    element={<QuizMode script={script} kanaData={kanaData} />}
+                />
+                <Route path="*" element={<Navigate to="/study" replace />} />
+            </Routes>
         </div>
     );
 }
