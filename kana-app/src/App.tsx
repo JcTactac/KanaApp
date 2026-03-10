@@ -12,7 +12,7 @@ function App() {
 
     return (
         <div className="App">
-            <h1>KanaApp</h1>
+            <h1>KanaApp - Jean Chrisophe Lay</h1>
 
             <nav className="mode-navigation">
                 <button
