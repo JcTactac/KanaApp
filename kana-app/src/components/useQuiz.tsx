@@ -1,6 +1,16 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { useLocalStorage } from './useLocalStorage';
 import type { Kana } from '../data/kana';
-import {useLocalStorage} from "./useLocalStorage.tsx";
+
+// Fonction pour mélanger les cards
+function shuffle<T>(array: T[]): T[] {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+}
 
 export function useQuiz(kanaData: Kana[], script: 'hiragana' | 'katakana') {
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -10,7 +20,10 @@ export function useQuiz(kanaData: Kana[], script: 'hiragana' | 'katakana') {
     const [showFeedback, setShowFeedback] = useState(false);
     const [bestScore, setBestScore] = useLocalStorage<number>('kana-best-score', 0);
 
-    const currentKana = kanaData[currentIndex];
+    // Le mélange ne se recalcule que si kanaData change réellement
+    const shuffledKana = useMemo(() => shuffle(kanaData), [kanaData]);
+
+    const currentKana = shuffledKana[currentIndex];
     const displayChar = script === 'hiragana' ? currentKana.hiragana : currentKana.katakana;
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -41,7 +54,7 @@ export function useQuiz(kanaData: Kana[], script: 'hiragana' | 'katakana') {
         setUserAnswer('');
 
         setTimeout(() => {
-            setCurrentIndex((prev) => (prev + 1) % kanaData.length);
+            setCurrentIndex((prev) => (prev + 1) % shuffledKana.length);
             setShowFeedback(false);
             setFeedback('');
         }, 1500);
