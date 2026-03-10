@@ -12,7 +12,7 @@ function App() {
 
     return (
         <div className="App">
-            <h1>KanaApp - Jean Christophe Lay</h1>
+            <h1>KanaApp</h1>
 
             <nav className="mode-navigation">
                 <button
@@ -53,14 +53,8 @@ function App() {
             )}
 
             <Routes>
-                <Route
-                    path="/study"
-                    element={<StudyMode script={script} kanaData={kanaData} />}
-                />
-                <Route
-                    path="/quiz"
-                    element={<QuizMode script={script} kanaData={kanaData} />}
-                />
+                <Route path="/study" element={<StudyMode script={script} kanaData={kanaData} />} />
+                <Route path="/quiz" element={<QuizMode script={script} kanaData={kanaData} />} />
                 <Route path="*" element={<Navigate to="/study" replace />} />
             </Routes>
         </div>

@@ -1,8 +1,7 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useLocalStorage } from './useLocalStorage';
 import type { Kana } from '../data/kana';
 
-// Fonction pour mélanger les cards
 function shuffle<T>(array: T[]): T[] {
     const shuffled = [...array];
     for (let i = shuffled.length - 1; i > 0; i--) {
@@ -12,7 +11,13 @@ function shuffle<T>(array: T[]): T[] {
     return shuffled;
 }
 
-export function useQuiz(kanaData: Kana[], script: 'hiragana' | 'katakana') {
+export type QuizMode = 'kana-to-romaji' | 'romaji-to-kana';
+
+export function useQuiz(
+    kanaData: Kana[],
+    script: 'hiragana' | 'katakana',
+    mode: QuizMode = 'kana-to-romaji'
+) {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [userAnswer, setUserAnswer] = useState('');
     const [score, setScore] = useState({ correct: 0, total: 0 });
@@ -20,18 +25,26 @@ export function useQuiz(kanaData: Kana[], script: 'hiragana' | 'katakana') {
     const [showFeedback, setShowFeedback] = useState(false);
     const [bestScore, setBestScore] = useLocalStorage<number>('kana-best-score', 0);
 
-    // Le mélange ne se recalcule que si kanaData change réellement
     const shuffledKana = useMemo(() => shuffle(kanaData), [kanaData]);
-
     const currentKana = shuffledKana[currentIndex];
-    const displayChar = script === 'hiragana' ? currentKana.hiragana : currentKana.katakana;
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const displayChar = mode === 'kana-to-romaji'
+        ? (script === 'hiragana' ? currentKana.hiragana : currentKana.katakana)
+        : currentKana.romanji;
+
+    const placeholder = mode === 'kana-to-romaji'
+        ? 'Tapez le rōmaji...'
+        : `Tapez le ${script === 'hiragana' ? 'hiragana' : 'katakana'}...`;
+
+    const handleSubmit = useCallback((e: React.FormEvent) => {
         e.preventDefault();
         if (userAnswer.trim() === '') return;
 
-        const isCorrect =
-            userAnswer.toLowerCase().trim() === currentKana.romanji.toLowerCase();
+        const correctAnswer = mode === 'kana-to-romaji'
+            ? currentKana.romanji
+            : (script === 'hiragana' ? currentKana.hiragana : currentKana.katakana);
+
+        const isCorrect = userAnswer.toLowerCase().trim() === correctAnswer.toLowerCase();
 
         const newScore = {
             correct: score.correct + (isCorrect ? 1 : 0),
@@ -48,7 +61,7 @@ export function useQuiz(kanaData: Kana[], script: 'hiragana' | 'katakana') {
         setFeedback(
             isCorrect
                 ? '✅ Correct !'
-                : `❌ Incorrect. C'était "${currentKana.romanji}"`
+                : `❌ Incorrect. C'était "${correctAnswer}"`
         );
         setShowFeedback(true);
         setUserAnswer('');
@@ -58,10 +71,11 @@ export function useQuiz(kanaData: Kana[], script: 'hiragana' | 'katakana') {
             setShowFeedback(false);
             setFeedback('');
         }, 1500);
-    };
+    }, [userAnswer, currentKana, score, bestScore, mode, script, shuffledKana.length]);
 
     return {
         displayChar,
+        placeholder,
         userAnswer,
         setUserAnswer,
         score,
