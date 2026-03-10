@@ -1,5 +1,7 @@
-import { useState } from 'react';
-import type {Kana} from '../data/kana';
+import { useRef, useEffect, useState, useMemo } from 'react';
+import { useQuiz, type QuizMode as QuizModeType } from './useQuiz';
+import KanaFilter from './KanaFilter';
+import type { Kana } from '../data/kana';
 
 interface QuizModeProps {
     script: 'hiragana' | 'katakana';
@@ -7,64 +9,79 @@ interface QuizModeProps {
 }
 
 function QuizMode({ script, kanaData }: QuizModeProps) {
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const [userAnswer, setUserAnswer] = useState('');
-    const [score, setScore] = useState({ correct: 0, total: 0 });
-    const [feedback, setFeedback] = useState('');
-    const [showFeedback, setShowFeedback] = useState(false);
+    const [mode, setMode] = useState<QuizModeType>('kana-to-romaji');
 
-    // Permet de déterminer quel caractère on doit afficher
-    const currentKana = kanaData[currentIndex];
-    const displayChar = script === 'hiragana'
-        ? currentKana.hiragana
-        : currentKana.katakana;
+    const availableGroups = useMemo(
+        () => [...new Set(kanaData.map((k) => k.group))],
+        [kanaData]
+    );
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
+    const [selectedGroups, setSelectedGroups] = useState<string[]>(
+        () => [...new Set(kanaData.map((k) => k.group))]
+    );
 
+    const filteredKana = useMemo(
+        () => kanaData.filter((k) => selectedGroups.includes(k.group)),
+        [kanaData, selectedGroups]
+    );
 
-        if (userAnswer.trim() === '') return;
+    const {
+        displayChar,
+        placeholder,
+        userAnswer,
+        setUserAnswer,
+        score,
+        bestScore,
+        feedback,
+        showFeedback,
+        handleSubmit,
+    } = useQuiz(filteredKana, script, mode);
 
-        /*
-         Permet de valider ou non la réponse utilisateur (enlève les espaces avec trim et met la réponse
-         en miniscule avec lowercase)
-         */
-        const isCorrect = userAnswer.toLowerCase().trim() ===
-            currentKana.romanji.toLowerCase();
-
-        setScore({
-            correct: score.correct + (isCorrect ? 1 : 0),
-            total: score.total + 1,
-        });
-
-        setFeedback(
-            isCorrect
-                ? '✅ Correct !'
-                : `❌ Incorrect. C'était "${currentKana.romanji}"`
-        );
-        setShowFeedback(true);
-        setUserAnswer('');
-
-        setTimeout(() => {
-            setCurrentIndex((currentIndex + 1) % kanaData.length);
-            setShowFeedback(false);
-            setFeedback('');
-        }, 1500);
-    };
+    const inputRef = useRef<HTMLInputElement>(null);
+    useEffect(() => {
+        if (!showFeedback) inputRef.current?.focus();
+    }, [displayChar, showFeedback]);
 
     return (
         <div className="quiz-container">
-            <div className="quiz-header">
+
+            {/* ── Sidebar gauche ── */}
+            <aside className="quiz-sidebar">
                 <div className="score">
                     Score : {score.correct} / {score.total}
                     {score.total > 0 && (
                         <span className="percentage">
-              {' '}({Math.round((score.correct / score.total) * 100)}%)
-            </span>
+                            {Math.round((score.correct / score.total) * 100)}%
+                        </span>
+                    )}
+                    {bestScore > 0 && (
+                        <span className="best-score">🏆 Record : {bestScore}%</span>
                     )}
                 </div>
-            </div>
 
+                <div className="mode-toggle">
+                    <button
+                        className={mode === 'kana-to-romaji' ? 'active' : ''}
+                        onClick={() => setMode('kana-to-romaji')}
+                    >
+                        Kana → Rōmaji
+                    </button>
+                    <button
+                        className={mode === 'romaji-to-kana' ? 'active' : ''}
+                        onClick={() => setMode('romaji-to-kana')}
+                    >
+                        Rōmaji → Kana
+                    </button>
+                </div>
+
+                <KanaFilter
+                    availableGroups={availableGroups}
+                    selectedGroups={selectedGroups}
+                    onChange={setSelectedGroups}
+                />
+            </aside>
+
+            {/* ── Carte quiz ── */}
             <div className="quiz-card">
                 <div className="quiz-character">
                     <span className="big-kana">{displayChar}</span>
@@ -72,11 +89,11 @@ function QuizMode({ script, kanaData }: QuizModeProps) {
 
                 <form onSubmit={handleSubmit} className="quiz-form">
                     <input
+                        ref={inputRef}
                         type="text"
                         value={userAnswer}
                         onChange={(e) => setUserAnswer(e.target.value)}
-                        placeholder="Tapez le rōmaji..."
-                        autoFocus
+                        placeholder={placeholder}
                         disabled={showFeedback}
                         className="quiz-input"
                     />
@@ -91,6 +108,7 @@ function QuizMode({ script, kanaData }: QuizModeProps) {
                     </div>
                 )}
             </div>
+
         </div>
     );
 }
